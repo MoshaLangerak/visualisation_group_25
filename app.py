@@ -1,6 +1,7 @@
 from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
+from jbi100_app.data import get_data
 
 from dash import html
 import plotly.express as px
@@ -10,6 +11,7 @@ from dash.dependencies import Input, Output
 if __name__ == '__main__':
     # Create data
     df = px.data.iris()
+    #df = get_data()
 
     # Instantiate custom views
     scatterplot1 = Scatterplot("Scatterplot 1", 'sepal_length', 'sepal_width', df)
