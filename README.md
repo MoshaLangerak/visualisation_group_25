@@ -1,8 +1,8 @@
-# JBI100-example-app
+# JBI100-Visualisation-Group-25
 
 ## About this app
 
-You can use this as a basic template for your JBI100 visualization project.
+Our solution for the JBI100 visualization project.
 
 ## Requirements
 
