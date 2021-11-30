@@ -4,18 +4,22 @@ from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import get_data
 
 from dash import html
+from dash import dcc
 import plotly.express as px
 from dash.dependencies import Input, Output
+import plotly.graph_objects as go
 
 
 if __name__ == '__main__':
     # Create data
     df = px.data.iris()
-    #df = get_data()
+    df_complete = get_data()
+    df_accidents = df_complete.loc['accidents']
 
     # Instantiate custom views
     scatterplot1 = Scatterplot("Scatterplot 1", 'sepal_length', 'sepal_width', df)
     scatterplot2 = Scatterplot("Scatterplot 2", 'petal_length', 'petal_width', df)
+    fig = go.Figure(go.Densitymapbox(lat=df_accidents['latitude'], lon=df_accidents['longitude'], z=df_accidents['accident_severity'], radius=10))
 
     app.layout = html.Div(
         id="app-container",
@@ -33,7 +37,11 @@ if __name__ == '__main__':
                 className="nine columns",
                 children=[
                     scatterplot1,
-                    scatterplot2
+                    scatterplot2, 
+                    dcc.Graph(
+                        id='map-graph',
+                        figure=fig
+                    )
                 ],
             ),
         ],
@@ -57,4 +65,4 @@ if __name__ == '__main__':
         return scatterplot2.update(selected_color, selected_data)
 
 
-    app.run_server(debug=False, dev_tools_ui=False)
+    app.run_server(debug=False, dev_tools_ui=True)
