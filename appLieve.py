@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output
 
 #own imports
 import pandas as pd
-import data
+# import data
 import dash
 from dash import dcc
 from dash import html
