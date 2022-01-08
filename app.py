@@ -1,6 +1,5 @@
 from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df
 
 from dash import html
@@ -138,21 +137,19 @@ if __name__ == '__main__':
          Input('opt2', 'value'), 
          Input('slider', 'value')])
 
-    # def display_choropleth(stat):
-    #     fig = px.choropleth_mapbox(
-    #         df_districts, geojson=geojson, color=stat,
-    #         locations='Local Authority District Code', featureidkey= 'properties.geo_code',
-    #         mapbox_style='dark')
-    #     fig.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
-    #         mapbox_zoom=4.3, # use this to zoom in on the map
-    #         mapbox_center_lat = 54.5, # use this to align the map on latitude
-    #         mapbox_center_lon = -3, # use this to align the map on longitude
-    #         mapbox_accesstoken=token, # token used for getting a different map type
-    #         width=800,
-    #         height=750)
-    #     return fig
-
     def update_figure(stat, input1, input2, input3):
+        fig_1 = px.choropleth_mapbox(
+            df_districts, geojson=geojson, color=stat,
+            locations='Local Authority District Code', featureidkey= 'properties.geo_code',
+            mapbox_style='dark')
+        fig_1.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+            mapbox_zoom=4.3, # use this to zoom in on the map
+            mapbox_center_lat = 54.5, # use this to align the map on latitude
+            mapbox_center_lon = -3, # use this to align the map on longitude
+            mapbox_accesstoken=token, # token used for getting a different map type
+            width=800,
+            height=750)
+        
         # filtering the data
         st2 = df_dates[(df_dates['date'] > dates[input3[0]]) & (df_dates['date'] < dates[input3[1]])]
         st3 = df_districts_dates[(df_districts_dates['local_authority_district'] == input2)]
@@ -173,22 +170,10 @@ if __name__ == '__main__':
 
         #return overall data fig if there is no district selected, otherwise return district fig
         if input2 is None:
-            fig_1 = go.Figure(data = [trace_2], layout = layout)
+            fig_2 = go.Figure(data = [trace_2], layout = layout)
         else:
-            fig_1 = go.Figure(data = [trace_3], layout=layout)
-    
-        fig_2 = px.choropleth_mapbox(
-            df_districts, geojson=geojson, color=stat,
-            locations='Local Authority District Code', featureidkey= 'properties.geo_code',
-            mapbox_style='dark')
-        fig_2.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
-            mapbox_zoom=4.3, # use this to zoom in on the map
-            mapbox_center_lat = 54.5, # use this to align the map on latitude
-            mapbox_center_lon = -3, # use this to align the map on longitude
-            mapbox_accesstoken=token, # token used for getting a different map type
-            width=800,
-            height=750)
-        
+            fig_2 = go.Figure(data = [trace_3], layout=layout)
+
         return [fig_1, fig_2]
     
     app.run_server(debug=False, dev_tools_ui=True)
