@@ -51,4 +51,19 @@ def stats_per_capita(df : pd.DataFrame, stats : list) -> None:
     for stat in stats:
         name = f'{stat} Per capita'
         df[name] = df[stat] / df['Population']
-# create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data
+        
+def create_districts_dates_df(df : pd.DataFrame) -> pd.DataFrame:
+    gb = df.groupby(['date', 'local_authority_district'])
+    df_ret = gb.size().to_frame(name='nr_accidents_pd')
+    df_ret = df_ret.join(gb.agg({'number_of_vehicles': 'sum'}).rename(columns={'number_of_vehicles':'nr_vehicles_pd'})).join(
+        gb.agg({'number_of_casualties': 'sum'}).rename(columns={'number_of_casualties': 'nr_casualties_pd'})).reset_index()
+    return df_ret
+
+def create_date_df(df : pd.DataFrame) -> pd.DataFrame:
+    gb = df.groupby(['date'])
+    df = gb.size().to_frame(name='nr_accidents_pd')
+    df = df.join(gb.agg({'number_of_vehicles': 'sum'}).rename(columns={'number_of_vehicles':'nr_vehicles_pd'})).join(
+        gb.agg({'number_of_casualties': 'sum'}).rename(columns={'number_of_casualties': 'nr_casualties_pd'})).reset_index()
+    return df
+    
+# create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df

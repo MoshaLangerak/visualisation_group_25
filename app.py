@@ -42,7 +42,7 @@ if __name__ == '__main__':
             {'label': 'Number of casualties', 'value': 'nr_casualties_pd'}]
 
     #second dropdown options (for districts)
-    available_indicators2 = df_districts['local_authority_district'].sort_values()
+    available_indicators2 = df_districts_dates['local_authority_district'].sort_values()
     opts2 = [{'label': i, 'value': i} for i in available_indicators2.unique()]
 
     #range slider options
@@ -64,11 +64,11 @@ if __name__ == '__main__':
 
     # ----------------------- Dash(board) lay-out ----------------------------------------
     app.layout = html.Div(
-        id="app-container",
+        id='app-container',
         children=[
             # dropdown
             html.P([
-                html.Label("Choose a feature"),
+                html.Label('Choose a feature'),
                 dcc.Dropdown(id = 'stat', 
                                 options = [{'value': x, 'label': x} for x in statistics],
                                 value = statistics[0])
@@ -76,10 +76,10 @@ if __name__ == '__main__':
                                 'fontSize' : '20px',
                                 'display': 'inline-block'}),
             
-            dcc.Graph(id="choropleth"),
+            dcc.Graph(id='choropleth'),
             html.Div([
-                    html.H1("Test dashboard Lieve"),
-                    html.P("subtitle here")
+                    html.H1('Test dashboard Lieve'),
+                    html.P('subtitle here')
                          ],
                      style = {'padding' : '50px' ,
                               'backgroundColor' : '#3aaab2'}),
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 dcc.Graph(id = 'plot', figure = fig),
                 # dropdown for features
                 html.P([
-                    html.Label("Choose a feature"),
+                    html.Label('Choose a feature'),
                     dcc.Dropdown(id = 'opt', options = opts,
                                 value = opts[0], multi=False)
                         ], style = {'width': '400px',
@@ -96,7 +96,7 @@ if __name__ == '__main__':
                                     'display': 'inline-block'}),
                 #dropdown for districts
                 html.P([
-                    html.Label("Choose a district"),
+                    html.Label('Choose a district'),
                     dcc.Dropdown(id = 'opt2', options = opts2,
                                  multi=False)
                         ], style = {'width': '400px',
@@ -105,7 +105,7 @@ if __name__ == '__main__':
                                     'display': 'inline-block'}),
                 # range slider
                 html.P([
-                    html.Label("Time Period"),
+                    html.Label('Time Period'),
                     dcc.RangeSlider(id = 'slider',
                                     marks = {i: 2000+i for i in range(0,22)},
                                     min = 0,
@@ -119,28 +119,28 @@ if __name__ == '__main__':
     )
     # ----------------------- Callbacks and figure updates -------------------------------
     @app.callback(
-        [Output("choropleth", "figure"), 
+        [Output('choropleth', 'figure'), 
          Output('plot', 'figure')], 
-        [Input("stat", "value"), 
+        [Input('stat', 'value'), 
          Input('opt', 'value'), 
          Input('opt2', 'value'), 
          Input('slider', 'value')])
 
-    def display_choropleth(stat):
-        fig = px.choropleth_mapbox(
-            df_districts, geojson=geojson, color=stat,
-            locations="Local Authority District Code", featureidkey= 'properties.geo_code',
-            mapbox_style='dark')
-        fig.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
-            mapbox_zoom=4.3, # use this to zoom in on the map
-            mapbox_center_lat = 54.5, # use this to align the map on latitude
-            mapbox_center_lon = -3, # use this to align the map on longitude
-            mapbox_accesstoken=token, # token used for getting a different map type
-            width=800,
-            height=750)
-        return fig
+    # def display_choropleth(stat):
+    #     fig = px.choropleth_mapbox(
+    #         df_districts, geojson=geojson, color=stat,
+    #         locations='Local Authority District Code', featureidkey= 'properties.geo_code',
+    #         mapbox_style='dark')
+    #     fig.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+    #         mapbox_zoom=4.3, # use this to zoom in on the map
+    #         mapbox_center_lat = 54.5, # use this to align the map on latitude
+    #         mapbox_center_lon = -3, # use this to align the map on longitude
+    #         mapbox_accesstoken=token, # token used for getting a different map type
+    #         width=800,
+    #         height=750)
+    #     return fig
 
-    def update_figure(input1, input2, input3):
+    def update_figure(stat, input1, input2, input3):
         # filtering the data
         st2 = df_dates[(df_dates['date'] > dates[input3[0]]) & (df_dates['date'] < dates[input3[1]])]
         st3 = df_districts_dates[(df_districts_dates['local_authority_district'] == input2)]
@@ -161,9 +161,22 @@ if __name__ == '__main__':
 
         #return overall data fig if there is no district selected, otherwise return district fig
         if input2 is None:
-            fig = go.Figure(data = [trace_2], layout = layout)
+            fig_1 = go.Figure(data = [trace_2], layout = layout)
         else:
-            fig = go.Figure(data = [trace_3], layout=layout)
-        return fig
+            fig_1 = go.Figure(data = [trace_3], layout=layout)
+    
+        fig_2 = px.choropleth_mapbox(
+            df_districts, geojson=geojson, color=stat,
+            locations='Local Authority District Code', featureidkey= 'properties.geo_code',
+            mapbox_style='dark')
+        fig_2.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+            mapbox_zoom=4.3, # use this to zoom in on the map
+            mapbox_center_lat = 54.5, # use this to align the map on latitude
+            mapbox_center_lon = -3, # use this to align the map on longitude
+            mapbox_accesstoken=token, # token used for getting a different map type
+            width=800,
+            height=750)
+        
+        return [fig_1, fig_2]
     
     app.run_server(debug=False, dev_tools_ui=True)
