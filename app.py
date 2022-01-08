@@ -12,38 +12,44 @@ import plotly.graph_objects as go
 
 if __name__ == '__main__':
     # Create data
-    file_path_1 = 'all_years_2000_2020.csv'
-    file_path_2 = 'Population data 2018.csv'
-    file_path_geojson = 'uk_la.geojson'
+    file_path_1 = 'Data/all_years_2000_2020.csv'
+    file_path_2 = 'Data/Population data 2018.csv'
+    file_path_geojson = 'Data/uk_local_areas/uk_la.geojson'
 
     stats = ['Accident Severity', 'Number of vehicles', 'Number of casualties']
     token = 'pk.eyJ1IjoibW9zaGEtbGFuZ2VyYWsiLCJhIjoiY2t3ZGoxMmtxMGt2ZzJudDN5NXA0YWQ4ciJ9.6QIBuYFeAajMhniiNVU-GA'
     statistics = ['Accident Severity', 'Number of vehicles', 'Number of casualties', 'Accident Severity Per capita', 'Number of vehicles Per capita', 'Number of casualties Per capita']
 
+    print('Loading data...')
     df_pd = load_accident_data(file_path_1)
     df_pop = load_population_data(file_path_2)
+    print('Creating district data...')
     df_grouped = create_districts_df(df_pd)
     df_districts = merge_df(df_grouped, df_pop)
     stats_per_capita(df_districts, stats)
+    print('Loading GeoJSON data...')
     geojson = load_geojson_data(file_path_geojson)
 
     # Instantiate custom views
-    scatterplot1 = Scatterplot("Scatterplot jhgfh", 'sepal_length', 'sepal_width', df)
-    scatterplot2 = Scatterplot("Scatterplot 2", 'petal_length', 'petal_width', df)
-    fig = go.Figure(go.Densitymapbox(lat=df_accidents['latitude'], lon=df_accidents['longitude'], z=df_accidents['accident_severity'], radius=10))
+    # scatterplot1 = Scatterplot("Scatterplot jhgfh", 'sepal_length', 'sepal_width', df)
+    # scatterplot2 = Scatterplot("Scatterplot 2", 'petal_length', 'petal_width', df)
+    # fig = go.Figure(go.Densitymapbox(lat=df_accidents['latitude'], lon=df_accidents['longitude'], z=df_accidents['accident_severity'], radius=10))
 
     app.layout = html.Div(
-        # dropdown
-        html.P([
-            html.Label("Choose a feature"),
-            dcc.Dropdown(id = 'stat', 
-                            options = [{'value': x, 'label': x} for x in statistics],
-                            value = statistics[0])
-                ], style = {'width': '400px',
-                            'fontSize' : '20px',
-                            'display': 'inline-block'}),
-        
-        dcc.Graph(id="choropleth"),
+        id="app-container",
+        children=[
+            # dropdown
+            html.P([
+                html.Label("Choose a feature"),
+                dcc.Dropdown(id = 'stat', 
+                                options = [{'value': x, 'label': x} for x in statistics],
+                                value = statistics[0])
+                    ], style = {'width': '400px',
+                                'fontSize' : '20px',
+                                'display': 'inline-block'}),
+            
+            dcc.Graph(id="choropleth"),
+        ]
     )
 
     @app.callback(
