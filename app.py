@@ -53,6 +53,18 @@ if __name__ == '__main__':
             '2020-01-01', '2020-12-31']
 
     # ----------------------- Initializing starting figure -------------------------------
+    fig_1 = px.choropleth_mapbox(
+            df_districts, geojson=geojson, color=statistics[0],
+            locations='Local Authority District Code', featureidkey= 'properties.geo_code',
+            mapbox_style='dark')
+    fig_1.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+            mapbox_zoom=4.3, # use this to zoom in on the map
+            mapbox_center_lat = 54.5, # use this to align the map on latitude
+            mapbox_center_lon = -3, # use this to align the map on longitude
+            mapbox_accesstoken=token, # token used for getting a different map type
+            width=800,
+            height=750)
+    
     #creating a figure
     trace_1 = go.Scatter(x = df_dates['date'], y = df_dates['nr_accidents_pd'],
                         name = 'nr_accidents_pd',
@@ -60,31 +72,31 @@ if __name__ == '__main__':
                                     color = 'rgb(106, 181, 135)')) #green if no district selected
     layout = go.Layout(title = 'Distribution of the number of accidents, vehicles and casualties over time',
                     hovermode = 'closest')
-    fig = go.Figure(data = [trace_1], layout = layout)
+    fig_2 = go.Figure(data = [trace_1], layout = layout)
 
     # ----------------------- Dash(board) lay-out ----------------------------------------
     app.layout = html.Div(
         id='app-container',
         children=[
-            # dropdown
-            html.P([
-                html.Label('Choose a feature'),
-                dcc.Dropdown(id = 'stat', 
-                                options = [{'value': x, 'label': x} for x in statistics],
-                                value = statistics[0])
-                    ], style = {'width': '400px',
-                                'fontSize' : '20px',
-                                'display': 'inline-block'}),
-            
-            dcc.Graph(id='choropleth'),
             html.Div([
-                    html.H1('Test dashboard Lieve'),
-                    html.P('subtitle here')
-                         ],
-                     style = {'padding' : '50px' ,
-                              'backgroundColor' : '#3aaab2'}),
+                html.H1('Road safety dashboard'),
+                html.P('Welcome to the road safety dashboard')
+                        ],
+                    style = {'padding' : '50px' ,
+                            'backgroundColor' : '#3aaab2'}),
+                 # dropdown
+                html.P([
+                    html.Label('Choose a feature'),
+                    dcc.Dropdown(id = 'stat', 
+                                    options = [{'value': x, 'label': x} for x in statistics],
+                                    value = statistics[0])
+                        ], style = {'width': '400px',
+                                    'fontSize' : '20px',
+                                    'display': 'inline-block'}),
+                
+                dcc.Graph(id='choropleth', figure = fig_1),
                 # adding a plot
-                dcc.Graph(id = 'plot', figure = fig),
+                dcc.Graph(id = 'plot', figure = fig_2),
                 # dropdown for features
                 html.P([
                     html.Label('Choose a feature'),
