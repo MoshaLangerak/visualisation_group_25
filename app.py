@@ -2,8 +2,10 @@ from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df
 
+import dash
 from dash import html
 from dash import dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
@@ -74,60 +76,118 @@ if __name__ == '__main__':
     fig_2 = go.Figure(data = [trace_1], layout = layout)
 
     # ----------------------- Dash(board) lay-out ----------------------------------------
+    app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+        
+    # app.layout = html.Div(
+    #     id='app-container',
+    #     children=[
+    #         html.Div([
+    #             html.H1('Road safety dashboard'),
+    #             html.P('Welcome to the road safety dashboard')
+    #                     ],
+    #                 style = {'padding' : '50px' ,
+    #                         'backgroundColor' : '#3aaab2'}),
+    #              # dropdown
+    #             html.P([
+    #                 html.Label('Choose a feature'),
+    #                 dcc.Dropdown(id = 'stat', 
+    #                                 options = [{'value': x, 'label': x} for x in statistics],
+    #                                 value = statistics[0])
+    #                     ], style = {'width': '400px',
+    #                                 'fontSize' : '20px',
+    #                                 'display': 'inline-block'}),
+                
+    #             dcc.Graph(id='choropleth', figure = fig_1),
+    #             # adding a plot
+    #             dcc.Graph(id = 'plot', figure = fig_2),
+    #             # dropdown for features
+    #             html.P([
+    #                 html.Label('Choose a feature'),
+    #                 dcc.Dropdown(id = 'opt', options = opts,
+    #                             value = opts[0], multi=False)
+    #                     ], style = {'width': '400px',
+    #                                 'fontSize' : '20px',
+    #                                 'padding-left' : '100px',
+    #                                 'display': 'inline-block'}),
+    #             #dropdown for districts
+    #             html.P([
+    #                 html.Label('Choose a district'),
+    #                 dcc.Dropdown(id = 'opt2', options = opts2,
+    #                              multi=False)
+    #                     ], style = {'width': '400px',
+    #                                 'fontSize' : '20px',
+    #                                 'padding-left' : '100px',
+    #                                 'display': 'inline-block'}),
+    #             # range slider
+    #             html.P([
+    #                 html.Label('Time Period'),
+    #                 dcc.RangeSlider(id = 'slider',
+    #                                 marks = {i: 2000+i for i in range(0,22)},
+    #                                 min = 0,
+    #                                 max = 21,
+    #                                 value = [0,21])
+    #                     ], style = {'width' : '80%',
+    #                                 'fontSize' : '20px',
+    #                                 'padding-left' : '100px',
+    #                                 'display': 'inline-block'})
+    #     ]
+    # )
+    
+    
     app.layout = html.Div(
-        id='app-container',
-        children=[
-            html.Div([
-                html.H1('Road safety dashboard'),
-                html.P('Welcome to the road safety dashboard')
-                        ],
-                    style = {'padding' : '50px' ,
-                            'backgroundColor' : '#3aaab2'}),
-                 # dropdown
-                html.P([
+        [
+        dbc.Row(dbc.Col(html.Div("Title"), style = {'padding' : '50px' , 'backgroundColor' : '#3aaab2'})),
+        dbc.Row(
+            [
+                dbc.Col(html.Div(html.P([
                     html.Label('Choose a feature'),
                     dcc.Dropdown(id = 'stat', 
                                     options = [{'value': x, 'label': x} for x in statistics],
                                     value = statistics[0])
-                        ], style = {'width': '400px',
-                                    'fontSize' : '20px',
-                                    'display': 'inline-block'}),
-                
-                dcc.Graph(id='choropleth', figure = fig_1),
-                # adding a plot
-                dcc.Graph(id = 'plot', figure = fig_2),
-                # dropdown for features
-                html.P([
+                        ])), width=4),
+                dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), width=8),
+            ]),
+        dbc.Row(
+            [
+                dbc.Col(html.Div(
+                    children = [html.P([
                     html.Label('Choose a feature'),
                     dcc.Dropdown(id = 'opt', options = opts,
                                 value = opts[0], multi=False)
-                        ], style = {'width': '400px',
-                                    'fontSize' : '20px',
-                                    'padding-left' : '100px',
-                                    'display': 'inline-block'}),
+                        ]),
                 #dropdown for districts
                 html.P([
                     html.Label('Choose a district'),
                     dcc.Dropdown(id = 'opt2', options = opts2,
                                  multi=False)
-                        ], style = {'width': '400px',
-                                    'fontSize' : '20px',
-                                    'padding-left' : '100px',
-                                    'display': 'inline-block'}),
-                # range slider
-                html.P([
-                    html.Label('Time Period'),
-                    dcc.RangeSlider(id = 'slider',
-                                    marks = {i: 2000+i for i in range(0,22)},
-                                    min = 0,
-                                    max = 21,
-                                    value = [0,21])
-                        ], style = {'width' : '80%',
-                                    'fontSize' : '20px',
-                                    'padding-left' : '100px',
-                                    'display': 'inline-block'})
+                        ]),
+                ]), width=4),
+                dbc.Col(html.Div(dcc.Graph(id = 'plot', figure = fig_2)), width=8),
+            ]),
+        dbc.Row(
+            [
+                dbc.Col(html.Div(), width=4),
+                dbc.Col(html.Div(
+                    # range slider
+                    html.P([
+                        html.Label('Time Period'),
+                        dcc.RangeSlider(id = 'slider',
+                                        marks = {i: 2000+i for i in range(0,22)},
+                                        min = 0,
+                                        max = 21,
+                                        value = [0,21])
+                        ])), width=4),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.Div("One of three columns"), width=4),
+                dbc.Col(html.Div("One of three columns"), width=4),
+                dbc.Col(html.Div("One of three columns"), width=4),  
+            ]),
         ]
     )
+    
     # ----------------------- Callbacks and figure updates -------------------------------
     @app.callback(
         [Output('choropleth', 'figure'), 
