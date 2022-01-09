@@ -63,8 +63,8 @@ if __name__ == '__main__':
             mapbox_center_lat = 54.5, # use this to align the map on latitude
             mapbox_center_lon = -3, # use this to align the map on longitude
             mapbox_accesstoken=token, # token used for getting a different map type
-            width=800,
-            height=750)
+            width=600,
+            height=600)
     
     #creating a figure
     trace_1 = go.Scatter(x = df_dates['date'], y = df_dates['nr_accidents_pd'],
@@ -81,14 +81,17 @@ if __name__ == '__main__':
     title_style = {
         'color' : '#ffffff',
         'background-color' : '#252b33',
-        'padding' : '50px',
+        'padding' : '30px',
         'fontSize' : '20px'
     }
     
     sidebar_style = {
         'color' : '#8191a0',
         'background-color' : '#38485b',
-        'padding' : '50px',
+        'padding-top': '20px',
+        'padding-right': '50px',
+        'padding-bottom': '20px',
+        'padding-left': '50px',
         'fontSize' : '20px',
         'text-align': 'center'
     }
@@ -96,13 +99,18 @@ if __name__ == '__main__':
     body_style = {
         'color' : '#57636f',
         'background-color' : '#eeeee',
-        'padding' : '50px',
-        'fontSize' : '20px'
+        'padding-top': '20px',
+        'padding-right': '50px',
+        'padding-bottom': '20px',
+        'padding-left': '50px',
+        'fontSize' : '20px',
+        'margin-left': 'auto',
+        'margin-right': 'auto',
     }
     
     app.layout = html.Div(
         [
-        dbc.Row(dbc.Col(html.Div("Title"), style = title_style)),
+        dbc.Row(dbc.Col(html.Div('Road Safety dashboard'), style = title_style)),
         dbc.Row(
             [
                 dbc.Col(html.Div(html.P([
@@ -142,14 +150,14 @@ if __name__ == '__main__':
                                         min = 0,
                                         max = 21,
                                         value = [0,21])
-                        ])), style = body_style, width=4),
+                        ])), style = {**body_style, 'width' : '800px'}, width=4),
             ]
         ),
         dbc.Row(
             [
                 dbc.Col(html.Div(), style = sidebar_style, width=4),
-                dbc.Col(html.Div("Placeholder for graph"), style = body_style, width=4),
-                dbc.Col(html.Div("Placeholder for graph"), style = body_style, width=4),  
+                dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),
+                dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),  
             ]),
         ]
     )
@@ -167,14 +175,14 @@ if __name__ == '__main__':
         fig_1 = px.choropleth_mapbox(
             df_districts, geojson=geojson, color=stat,
             locations='Local Authority District Code', featureidkey= 'properties.geo_code',
-            mapbox_style='dark')
+            mapbox_style='light')
         fig_1.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
-            mapbox_zoom=4.3, # use this to zoom in on the map
-            mapbox_center_lat = 54.5, # use this to align the map on latitude
-            mapbox_center_lon = -3, # use this to align the map on longitude
-            mapbox_accesstoken=token, # token used for getting a different map type
-            width=800,
-            height=750)
+                mapbox_zoom=4.3, # use this to zoom in on the map
+                mapbox_center_lat = 54.5, # use this to align the map on latitude
+                mapbox_center_lon = -3, # use this to align the map on longitude
+                mapbox_accesstoken=token, # token used for getting a different map type
+                width=600,
+                height=600)
         
         # filtering the data
         st2 = df_dates[(df_dates['date'] > dates[input3[0]]) & (df_dates['date'] < dates[input3[1]])]
