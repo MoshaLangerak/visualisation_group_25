@@ -57,7 +57,7 @@ if __name__ == '__main__':
     fig_1 = px.choropleth_mapbox(
             df_districts, geojson=geojson, color=statistics[0],
             locations='Local Authority District Code', featureidkey= 'properties.geo_code',
-            mapbox_style='dark')
+            mapbox_style='light')
     fig_1.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
             mapbox_zoom=4.3, # use this to zoom in on the map
             mapbox_center_lat = 54.5, # use this to align the map on latitude
@@ -77,66 +77,32 @@ if __name__ == '__main__':
 
     # ----------------------- Dash(board) lay-out ----------------------------------------
     app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-        
-    # app.layout = html.Div(
-    #     id='app-container',
-    #     children=[
-    #         html.Div([
-    #             html.H1('Road safety dashboard'),
-    #             html.P('Welcome to the road safety dashboard')
-    #                     ],
-    #                 style = {'padding' : '50px' ,
-    #                         'backgroundColor' : '#3aaab2'}),
-    #              # dropdown
-    #             html.P([
-    #                 html.Label('Choose a feature'),
-    #                 dcc.Dropdown(id = 'stat', 
-    #                                 options = [{'value': x, 'label': x} for x in statistics],
-    #                                 value = statistics[0])
-    #                     ], style = {'width': '400px',
-    #                                 'fontSize' : '20px',
-    #                                 'display': 'inline-block'}),
-                
-    #             dcc.Graph(id='choropleth', figure = fig_1),
-    #             # adding a plot
-    #             dcc.Graph(id = 'plot', figure = fig_2),
-    #             # dropdown for features
-    #             html.P([
-    #                 html.Label('Choose a feature'),
-    #                 dcc.Dropdown(id = 'opt', options = opts,
-    #                             value = opts[0], multi=False)
-    #                     ], style = {'width': '400px',
-    #                                 'fontSize' : '20px',
-    #                                 'padding-left' : '100px',
-    #                                 'display': 'inline-block'}),
-    #             #dropdown for districts
-    #             html.P([
-    #                 html.Label('Choose a district'),
-    #                 dcc.Dropdown(id = 'opt2', options = opts2,
-    #                              multi=False)
-    #                     ], style = {'width': '400px',
-    #                                 'fontSize' : '20px',
-    #                                 'padding-left' : '100px',
-    #                                 'display': 'inline-block'}),
-    #             # range slider
-    #             html.P([
-    #                 html.Label('Time Period'),
-    #                 dcc.RangeSlider(id = 'slider',
-    #                                 marks = {i: 2000+i for i in range(0,22)},
-    #                                 min = 0,
-    #                                 max = 21,
-    #                                 value = [0,21])
-    #                     ], style = {'width' : '80%',
-    #                                 'fontSize' : '20px',
-    #                                 'padding-left' : '100px',
-    #                                 'display': 'inline-block'})
-    #     ]
-    # )
+
+    title_style = {
+        'color' : '#ffffff',
+        'background-color' : '#252b33',
+        'padding' : '50px',
+        'fontSize' : '20px'
+    }
     
+    sidebar_style = {
+        'color' : '#8191a0',
+        'background-color' : '#38485b',
+        'padding' : '50px',
+        'fontSize' : '20px',
+        'text-align': 'center'
+    }
+    
+    body_style = {
+        'color' : '#57636f',
+        'background-color' : '#eeeee',
+        'padding' : '50px',
+        'fontSize' : '20px'
+    }
     
     app.layout = html.Div(
         [
-        dbc.Row(dbc.Col(html.Div("Title"), style = {'padding' : '50px' , 'backgroundColor' : '#3aaab2'})),
+        dbc.Row(dbc.Col(html.Div("Title"), style = title_style)),
         dbc.Row(
             [
                 dbc.Col(html.Div(html.P([
@@ -144,8 +110,8 @@ if __name__ == '__main__':
                     dcc.Dropdown(id = 'stat', 
                                     options = [{'value': x, 'label': x} for x in statistics],
                                     value = statistics[0])
-                        ])), width=4),
-                dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), width=8),
+                        ])), style = sidebar_style, width=4),
+                dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), style = body_style, width=8),
             ]),
         dbc.Row(
             [
@@ -161,12 +127,12 @@ if __name__ == '__main__':
                     dcc.Dropdown(id = 'opt2', options = opts2,
                                  multi=False)
                         ]),
-                ]), width=4),
-                dbc.Col(html.Div(dcc.Graph(id = 'plot', figure = fig_2)), width=8),
+                ]), style = sidebar_style, width=4),
+                dbc.Col(html.Div(dcc.Graph(id = 'plot', figure = fig_2)), style = body_style, width=8),
             ]),
         dbc.Row(
             [
-                dbc.Col(html.Div(), width=4),
+                dbc.Col(html.Div(), style = sidebar_style, width=4),
                 dbc.Col(html.Div(
                     # range slider
                     html.P([
@@ -176,14 +142,14 @@ if __name__ == '__main__':
                                         min = 0,
                                         max = 21,
                                         value = [0,21])
-                        ])), width=4),
+                        ])), style = body_style, width=4),
             ]
         ),
         dbc.Row(
             [
-                dbc.Col(html.Div("One of three columns"), width=4),
-                dbc.Col(html.Div("One of three columns"), width=4),
-                dbc.Col(html.Div("One of three columns"), width=4),  
+                dbc.Col(html.Div(), style = sidebar_style, width=4),
+                dbc.Col(html.Div("Placeholder for graph"), style = body_style, width=4),
+                dbc.Col(html.Div("Placeholder for graph"), style = body_style, width=4),  
             ]),
         ]
     )
