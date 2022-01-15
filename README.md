@@ -8,13 +8,11 @@ Our solution for the JBI100 visualization project.
 
 * Python 3 (add it to your path (system variables) to make sure you can access it from the command prompt)
 * Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* Data folder (since this cannot be saved on GitHub) (*insert link*)
+* Data folder (since this cannot be saved on GitHub) (https://drive.google.com/drive/folders/144wEfkkN4OJ6icSgAEAxIxfLvg8Kk1cY?usp=sharing)
 
 ## How to run this app
-
 We suggest you to create a virtual environment for running this app with Python 3. Clone this repository 
 and open your terminal/command prompt in the root folder.
-
 
 open the command prompt
 cd into the folder where you want to save the files and run the following commands. To get the HTTPS link, press the clone button in the right top corner and then copy the link under "Clone with HTTPS". 
@@ -36,6 +34,8 @@ In Unix system:
 ```
 > source venv/bin/activate
 ```
+
+Move the data downloaded to the data folder with parh ~/visualisation_group_25/Data
 
 Install all required packages by running:
 ```
