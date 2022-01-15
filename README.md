@@ -8,6 +8,7 @@ Our solution for the JBI100 visualization project.
 
 * Python 3 (add it to your path (system variables) to make sure you can access it from the command prompt)
 * Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* Data folder (since this cannot be saved on GitHub) (*insert link*)
 
 ## How to run this app
 
@@ -22,7 +23,6 @@ cd into the folder where you want to save the files and run the following comman
 > git clone <HTTPS link>
 > cd <folder name on your computer>
 > python -m venv venv
-
 ```
 If python is not recognized use python3 instead
 
@@ -46,8 +46,10 @@ Run this app locally with:
 ```
 > python app.py
 ```
-You will get a http link, open this in your browser to see the results. You can edit the code in any editor (e.g. Visual Studio Code) and if you save it you will see the results in the browser.
+You will get a http link, open this in your browser to see the results. Now you can view the dashboard.
 
 ## Resources
 
 * [Dash](https://dash.plot.ly/)
+* [Road Safety Data](https://data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-safety-data)
+* [Population Data](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland)
