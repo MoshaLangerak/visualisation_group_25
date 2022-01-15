@@ -14,7 +14,6 @@ def load_accident_data(file_path : str) -> pd.DataFrame:
              'first_road_number', 'second_road_number','did_police_officer_attend_scene_of_accident',
              'vehicle_reference', 'casualty_reference', 'age_band_of_casualty', 'pedestrian_location',
              'pedestrian_movement', 'car_passenger', 'bus_or_coach_passenger', 'casualty_home_area_type',
-
              'vehicle_type', 'local_authority_highway', 'urban_or_rural_area', 'lsoa_of_accident_location',
              'casualty_type', 'casualty_imd_decile'
              ], axis=1, inplace=True) #the last two rows (after the whiteline) are the columns that we're not sure of yet
