@@ -2,7 +2,7 @@
 
 ## About this app
 
-Our solution for the JBI100 visualization project.
+Our project code for the JBI100 visualization project.
 
 ## Requirements
 
@@ -14,8 +14,7 @@ Our solution for the JBI100 visualization project.
 We suggest you to create a virtual environment for running this app with Python 3. Clone this repository 
 and open your terminal/command prompt in the root folder.
 
-open the command prompt
-cd into the folder where you want to save the files and run the following commands. To get the HTTPS link, press the clone button in the right top corner and then copy the link under "Clone with HTTPS". 
+Open the command prompt cd into the folder where you want to save the files and run the following commands. To get the HTTPS link, press the clone button in the right top corner and then copy the link under "Clone with HTTPS". 
 
 ```
 > git clone <HTTPS link>
@@ -30,12 +29,14 @@ In Windows:
 > venv\Scripts\activate
 
 ```
-In Unix system:
+In Unix (macOS or Linux) system:
+
 ```
 > source venv/bin/activate
+
 ```
 
-Move the data downloaded to the data folder with parh ~/visualisation_group_25/Data
+Move the data downloaded to the data folder with path ~/visualisation_group_25/Data
 
 Install all required packages by running:
 ```
