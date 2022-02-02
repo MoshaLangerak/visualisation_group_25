@@ -118,8 +118,9 @@ if __name__ == '__main__':
                     dcc.Dropdown(id = 'stat', 
                                     options = [{'value': x, 'label': x} for x in statistics],
                                     value = statistics[0])
-                        ])), style = sidebar_style, width=4),
-                dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), style = body_style, width=8),
+                        ])), style = sidebar_style, width=3),
+                dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), style = body_style, width=5),
+                dbc.Col(html.Div(dcc.Graph(id='density', figure = fig_1)), style = body_style, width=4),
             ]),
         dbc.Row(
             [
@@ -135,12 +136,12 @@ if __name__ == '__main__':
                     dcc.Dropdown(id = 'opt2', options = opts2,
                                  multi=False)
                         ]),
-                ]), style = sidebar_style, width=4),
+                ]), style = sidebar_style, width=3),
                 dbc.Col(html.Div(dcc.Graph(id = 'plot', figure = fig_2)), style = body_style, width=8),
             ]),
         dbc.Row(
             [
-                dbc.Col(html.Div(), style = sidebar_style, width=4),
+                dbc.Col(html.Div(), style = sidebar_style, width=3),
                 dbc.Col(html.Div(
                     # range slider
                     html.P([
@@ -155,7 +156,7 @@ if __name__ == '__main__':
         ),
         dbc.Row(
             [
-                dbc.Col(html.Div(), style = sidebar_style, width=4),
+                dbc.Col(html.Div(), style = sidebar_style, width=3),
                 dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),
                 dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),  
             ]),
