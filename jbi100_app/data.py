@@ -31,6 +31,11 @@ def load_geojson_data(file_path : str) -> dict:
         geojson = json.load(f)
         return geojson
 
+def create_density_df(df : pd.DataFrame) -> pd.DataFrame:
+    df_density = df.drop(df.columns.difference(['longitude', 'latitude', 'accident_year', 'accident_severity', 'number_of_vehicles','number_of_casualties', 'accident_index']), 1, inplace=False)
+    df_density.rename(columns = {'local_authority_ons_district':'Local Authority District Code', 'accident_severity':'Accident Severity', 'number_of_vehicles':'Number of vehicles', 'number_of_casualties':'Number of casualties', 'accident_index':'Accident Index'}, inplace = True)
+    return df_density
+
 def create_districts_df(df : pd.DataFrame) -> pd.DataFrame:
     df_grouped = df.groupby('local_authority_ons_district').sum().reset_index()
     df_grouped.drop(df_grouped.columns.difference(['local_authority_ons_district', 'accident_severity', 'number_of_vehicles','number_of_casualties']), 1, inplace=True)

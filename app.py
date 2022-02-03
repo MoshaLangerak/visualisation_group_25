@@ -1,6 +1,6 @@
 from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df
+from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df
 
 import dash
 from dash import html
@@ -29,6 +29,8 @@ if __name__ == '__main__':
     df_grouped = create_districts_df(df_pd)
     df_districts = merge_df(df_grouped, df_pop)
     stats_per_capita(df_districts, stats)
+    print('Creating density data...')
+    df_density = create_density_df(df_pd)
     print('Loading GeoJSON data...')
     geojson = load_geojson_data(file_path_geojson)
     print('Creating date data...')
@@ -55,9 +57,9 @@ if __name__ == '__main__':
 
     # ----------------------- Initializing starting figure -------------------------------
     fig_1 = px.choropleth_mapbox(
-            df_districts, geojson=geojson, color=statistics[0],
-            locations='Local Authority District Code', featureidkey= 'properties.geo_code',
-            mapbox_style='light')
+                df_districts, geojson=geojson, color=statistics[0],
+                locations='Local Authority District Code', featureidkey= 'properties.geo_code',
+                mapbox_style='light')
     fig_1.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
             mapbox_zoom=4.3, # use this to zoom in on the map
             mapbox_center_lat = 54.5, # use this to align the map on latitude
@@ -75,6 +77,23 @@ if __name__ == '__main__':
                     hovermode = 'closest')
     fig_2 = go.Figure(data = [trace_1], layout = layout)
 
+    fig_3 = px.density_mapbox(df_density[df_density['accident_year'] == 2020], #which data to use, just a pandas dataframe
+                lat='latitude', #which column to use for latitude
+                lon='longitude', #which column to use for longitude
+                hover_data =['Accident Index'], #what data to show when hovering over a data point
+                z=statistics[0], # what colour to give the data, can work with both numerical and categorical variables
+                mapbox_style='light',
+                opacity = 0.5, # change the opacity of the oclours on the map
+                range_color = [0, 15]) # change the range of the z metric's colour scale)
+    
+    fig_3.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+                mapbox_zoom=13, # use this to zoom in on the map
+                mapbox_center_lat = 51.5085300, # use this to align the map on latitude
+                mapbox_center_lon = -0.1257400, # use this to align the map on longitude
+                mapbox_accesstoken=token
+                    )
+    
+    
     # ----------------------- Dash(board) lay-out ----------------------------------------
     app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -120,7 +139,7 @@ if __name__ == '__main__':
                                     value = statistics[0])
                         ])), style = sidebar_style, width=3),
                 dbc.Col(html.Div(dcc.Graph(id='choropleth', figure = fig_1)), style = body_style, width=5),
-                dbc.Col(html.Div(dcc.Graph(id='density', figure = fig_1)), style = body_style, width=4),
+                dbc.Col(html.Div(dcc.Graph(id='density', figure = fig_3)), style = body_style, width=4),
             ]),
         dbc.Row(
             [
@@ -166,13 +185,15 @@ if __name__ == '__main__':
     # ----------------------- Callbacks and figure updates -------------------------------
     @app.callback(
         [Output('choropleth', 'figure'), 
-         Output('plot', 'figure')], 
+         Output('plot', 'figure'),
+         Output('density', 'figure')], 
         [Input('stat', 'value'), 
          Input('opt', 'value'), 
          Input('opt2', 'value'), 
          Input('slider', 'value')])
 
     def update_figure(stat, input1, input2, input3):
+        print(stat, input1, input2, input3)
         fig_1 = px.choropleth_mapbox(
             df_districts, geojson=geojson, color=stat,
             locations='Local Authority District Code', featureidkey= 'properties.geo_code',
@@ -207,8 +228,49 @@ if __name__ == '__main__':
         if input2 is None:
             fig_2 = go.Figure(data = [trace_2], layout = layout)
         else:
-            fig_2 = go.Figure(data = [trace_3], layout=layout)
+            fig_2 = go.Figure(data = [trace_3], layout = layout)
+            
+        fig_3 = px.density_mapbox(df_density[df_density['accident_year'] == 2020], #which data to use, just a pandas dataframe
+                lat='latitude', #which column to use for latitude
+                lon='longitude', #which column to use for longitude
+                hover_data =['Accident Index'], #what data to show when hovering over a data point
+                z=statistics[0], # what colour to give the data, can work with both numerical and categorical variables
+                mapbox_style='light',
+                opacity = 0.5, # change the opacity of the oclours on the map
+                range_color = [0, 15]) # change the range of the z metric's colour scale)
+    
+        fig_3.update_layout(margin={'r':0, 't':0, 'l':0, 'b':0},
+                    mapbox_zoom=13, # use this to zoom in on the map
+                    mapbox_center_lat = 51.5085300, # use this to align the map on latitude
+                    mapbox_center_lon = -0.1257400, # use this to align the map on longitude
+                    mapbox_accesstoken=token
+                        )
 
-        return [fig_1, fig_2]
+        return [fig_1, fig_2, fig_3]
     
     app.run_server(debug=False, dev_tools_ui=True)
+
+
+# [2022-02-03 10:51:04,898] ERROR in app: Exception on /_dash-update-component [POST]
+# Traceback (most recent call last):
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 2073, in wsgi_app
+#     response = self.full_dispatch_request()
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1518, in full_dispatch_request
+#     rv = self.handle_user_exception(e)
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+#     rv = self.dispatch_request()
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+#     return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/dash/dash.py", line 1344, in dispatch
+#     response.set_data(func(*args, outputs_list=outputs_list))
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/dash/_callback.py", line 151, in add_context
+#     output_value = func(*func_args, **func_kwargs)  # %% callback invoked %%
+#   File "app.py", line 217, in update_figure
+#     trace_2 = go.Scatter(x = st2['date'], y=st2[input1],
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/frame.py", line 3512, in __getitem__
+#     indexer = self.columns._get_indexer_strict(key, "columns")[1]
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 5782, in _get_indexer_strict
+#     self._raise_if_missing(keyarr, indexer, axis_name)
+#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 5842, in _raise_if_missing
+#     raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+# KeyError: "None of [Index(['label', 'value'], dtype='object')] are in the [columns]"
