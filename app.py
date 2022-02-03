@@ -249,28 +249,3 @@ if __name__ == '__main__':
         return [fig_1, fig_2, fig_3]
     
     app.run_server(debug=False, dev_tools_ui=True)
-
-
-# [2022-02-03 10:51:04,898] ERROR in app: Exception on /_dash-update-component [POST]
-# Traceback (most recent call last):
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 2073, in wsgi_app
-#     response = self.full_dispatch_request()
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1518, in full_dispatch_request
-#     rv = self.handle_user_exception(e)
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
-#     rv = self.dispatch_request()
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
-#     return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/dash/dash.py", line 1344, in dispatch
-#     response.set_data(func(*args, outputs_list=outputs_list))
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/dash/_callback.py", line 151, in add_context
-#     output_value = func(*func_args, **func_kwargs)  # %% callback invoked %%
-#   File "app.py", line 217, in update_figure
-#     trace_2 = go.Scatter(x = st2['date'], y=st2[input1],
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/frame.py", line 3512, in __getitem__
-#     indexer = self.columns._get_indexer_strict(key, "columns")[1]
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 5782, in _get_indexer_strict
-#     self._raise_if_missing(keyarr, indexer, axis_name)
-#   File "/Users/MoshaLangerak_1/Documents/GitHub/visualisation_group_25/venv/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 5842, in _raise_if_missing
-#     raise KeyError(f"None of [{key}] are in the [{axis_name}]")
-# KeyError: "None of [Index(['label', 'value'], dtype='object')] are in the [columns]"
