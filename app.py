@@ -1,6 +1,6 @@
 from jbi100_app.main import app
 from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df, create_env_data, create_bar_data
-from jbi100_app.views.figs import create_env_fig
+from jbi100_app.views.figs import create_bar_fig, create_env_fig
 
 import dash
 from dash import html
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     statistics = ['Accident Severity', 'Number of vehicles', 'Number of casualties', 'Accident Severity Per capita', 'Number of vehicles Per capita', 'Number of casualties Per capita']
 
     print('Loading data...')
-    df_pd = load_accident_data(file_path_1)
+    df_pd, df_original = load_accident_data(file_path_1)
     df_pop = load_population_data(file_path_2)
     print('Creating district data...')
     df_grouped = create_districts_df(df_pd)
@@ -38,6 +38,8 @@ if __name__ == '__main__':
     df_dates = create_date_df(df_pd)
     print('Creating environmental data...')
     df_weather, df_light, df_skidding, df_road, df_site = create_env_data(df_pd)
+    print('Creating bar chart data...')
+    purpose_accident, x_purpose_accident, detail_junction_accident, x_detail_junction_accident, control_junction_accident, x_control_junction_accident, vehicle_accident, x_vehicle_accident, manoeuvre_accident, x_manoeuvre_accident, location_junction_accident, x_location_junction_accident = create_bar_data(df_original)
     
     # ----------------------- Initializing options for the interactions --------------------
     #dropdown options (for features)
@@ -100,7 +102,7 @@ if __name__ == '__main__':
     
     fig_4 = create_env_fig(fig_4_names[0], df_light, df_weather, df_skidding, df_road, df_site)
 
-
+    fig_5 = create_bar_fig(purpose_accident, x_purpose_accident, detail_junction_accident, x_detail_junction_accident, control_junction_accident, x_control_junction_accident, vehicle_accident, x_vehicle_accident, manoeuvre_accident, x_manoeuvre_accident, location_junction_accident, x_location_junction_accident)
     
     
     # ----------------------- Dash(board) lay-out ----------------------------------------
@@ -198,7 +200,7 @@ if __name__ == '__main__':
         dbc.Row(
             [
                 dbc.Col(html.Div(), style = sidebar_style, width=3),
-                dbc.Col(html.Div(dcc.Graph(id = 'plot_3', figure = fig_4)), style = body_style, width=8)
+                dbc.Col(html.Div(dcc.Graph(id = 'plot_3', figure = fig_5)), style = body_style, width=8)
             ]),
         ]
     )

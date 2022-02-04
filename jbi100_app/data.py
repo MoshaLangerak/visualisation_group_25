@@ -4,6 +4,7 @@ import json
         
 def load_accident_data(file_path : str) -> pd.DataFrame:
     df = pd.read_csv(file_path, low_memory=False)
+    df_original = df.copy()
     #dropping unnecessary columns
     df.drop(['Unnamed: 0', 'Unnamed: 0.1', 'towing_and_articulation', 'vehicle_manoeuvre','vehicle_location_restricted_lane',
              'junction_location', 'hit_object_in_carriageway',
@@ -19,7 +20,7 @@ def load_accident_data(file_path : str) -> pd.DataFrame:
              ], axis=1, inplace=True) #the last two rows (after the whiteline) are the columns that we're not sure of yet
     # changing the date column to represent a datetime type
     df['date'] = pd.to_datetime(df['date'])
-    return df
+    return df, df_original
 
 def load_population_data(file_path : str) -> pd.DataFrame:
     df = pd.read_csv(file_path, sep=';', low_memory=False)
