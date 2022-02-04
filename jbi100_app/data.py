@@ -82,3 +82,38 @@ def create_env_data(df: pd.DataFrame) -> pd.DataFrame:
     road = relevant_factors[['road_surface_conditions', 'date', 'number_of_casualties']].groupby(['road_surface_conditions', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
     site =  relevant_factors[['special_conditions_at_site', 'date', 'number_of_casualties']].groupby(['special_conditions_at_site', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
     return weather, light, skidding, road, site
+
+def create_bar_data(df: pd.DataFrame):
+    # create df for journey purpose 
+    purpose_accident = df.groupby(['journey_purpose_of_driver'])['accident_severity'].value_counts()
+    purpose_accident = purpose_accident.drop([-1, 6, 15])
+    x_purpose_accident = ['Journey as part of work', 'Commuting to/from work', 'Taking school pupil to/from school', 'Pupil riding to / from school', 'Other']
+
+
+    # create df for junction detail
+    detail_junction_accident = df.groupby(['junction_detail'])['accident_severity'].value_counts()
+    detail_junction_accident = detail_junction_accident.drop([-1, 99])
+    x_detail_junction_accident = ['Not at or within 20 metres of junction', 'Roundabout', 'Mini roundabout', 'T or staggered junction', 'Slip road', 'Crossroads', 'Junction more than four arms (not RAB)', 'Using private drive or entrance', 'Other junction']
+
+
+    # create df for junction control
+    control_junction_accident = df.groupby(['junction_control'])['accident_severity'].value_counts()
+    control_junction_accident = control_junction_accident.drop([-1, 0, 9])
+    x_control_junction_accident = ['Authorised person', 'Automatic traffic signal', 'Stop sign', 'Give way or uncontrolled']
+
+
+    # create df for vehicle type
+    vehicle_accident = df.groupby(['vehicle_type'])['accident_severity'].value_counts()
+    vehicle_accident = vehicle_accident.drop([-1, 9, 97, 98, 99, 106, 108, 109])
+    x_vehicle_accident = ['Pedal cycle', 'M/cycle 50cc and under', 'M/cycle over 50cc and up to 125cc', 'M/cycle over 125cc and up to 500cc', 'Motorcycle over 500cc', 'Taxi / Private hire car', 'Minibus (8-16 passenger seats)', 'Bus or coach', 'Ridden horse', 'Agricultural vehicle', 'Tram / Light rail', 'Van - Goods vehicle 3.5 tonnes mgw and under', 'Goods vehicle over 3.5 tonnes mgw and under 7.5 tonnes mgw', 'Goods vehicle 7.5 tonnes mgw & over', 'Mobility scooter', 'Electric Motorcycle', 'Other']
+
+    # create df for manoeuvre
+    manoeuvre_accident = df.groupby(['vehicle_manoeuvre'])['accident_severity'].value_counts()
+    manoeuvre_accident = manoeuvre_accident.drop([-1, 18, 99])
+    x_manoeuvre_accident = ['Reversing', 'Parked', 'Waiting to go ahead but held up', 'Slowing or stopping', 'Moving off', 'U turn', 'Turning left', 'Waiting to turn left', 'Turning right', 'Waiting to turn right', 'Changing lane to left', 'Changing lane to right', 'O’taking moving veh on its offside', 'O’taking stationary veh on its offside', 'Overtaking on nearside', 'Going ahead left hand bend', 'Going ahead right hand bend']
+
+    # create df for junction location
+    location_junction_accident = df.groupby(['junction_location'])['accident_severity'].value_counts()
+    location_junction_accident = location_junction_accident.drop([-1, 0, 9])
+    x_location_junction_accident = ['Approaching junction or waiting/parked at junction approach', 'Cleared junction or waiting/parked at junction exit', 'Leaving roundabout', 'Entering roundabout', 'Leaving main road', 'Entering main road', 'Entering from slip road', 'Mid junction– on roundabout or on main road']
+    return purpose_accident, x_purpose_accident, detail_junction_accident, x_detail_junction_accident, control_junction_accident, x_control_junction_accident, vehicle_accident, x_vehicle_accident, manoeuvre_accident, x_manoeuvre_accident, location_junction_accident, x_location_junction_accident

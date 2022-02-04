@@ -1,7 +1,6 @@
 from jbi100_app.main import app
-from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df, create_env_data
-from jbi100_app.views.figs import get_df, create_env_fig
+from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df, create_env_data, create_bar_data
+from jbi100_app.views.figs import create_env_fig
 
 import dash
 from dash import html
@@ -60,7 +59,7 @@ if __name__ == '__main__':
     
     fig_4_names = ['Light Conditions', 'Weather Conditions', 'Consequence of Skidding',
             'Surface of Road', 'Special scene at sight']
-
+    
     # ----------------------- Initializing starting figure -------------------------------
     fig_1 = px.choropleth_mapbox(
                 df_districts, geojson=geojson, color=statistics[0],
@@ -100,6 +99,8 @@ if __name__ == '__main__':
                     )
     
     fig_4 = create_env_fig(fig_4_names[0], df_light, df_weather, df_skidding, df_road, df_site)
+
+
     
     
     # ----------------------- Dash(board) lay-out ----------------------------------------

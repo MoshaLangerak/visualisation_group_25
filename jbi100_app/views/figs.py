@@ -1,11 +1,7 @@
 import pandas as pd
 import plotly.graph_objs as go
-import dash
-from dash.exceptions import PreventUpdate
-from dash.dependencies import Input, Output, State
-import dash_html_components as html
-import dash_core_components as dcc
 from matplotlib import pyplot as plt
+import plotly.graph_objects as px
 
 def get_df(dataframe, year1, year2):
     frame = dataframe.loc[(dataframe.date <= year2) & (dataframe.date >= year1)]
@@ -67,3 +63,184 @@ def create_env_fig(fig_name, light, weather, skidding, road, site):
     
     return figure
 
+def create_bar_fig(purpose_accident, x_purpose_accident, detail_junction_accident, x_detail_junction_accident, control_junction_accident, x_control_junction_accident, vehicle_accident, x_vehicle_accident, manoeuvre_accident, x_manoeuvre_accident, location_junction_accident, x_location_junction_accident) -> plt.figure:
+    fig_purpose_accident = px.Figure(data=[go.Bar(
+    name = 'Fatal',
+    x = x_purpose_accident,
+    y = purpose_accident.unstack()[1].tolist()
+   ),
+                        go.Bar(
+    name = 'Serious',
+    x = x_purpose_accident,
+    y = purpose_accident.unstack()[2].tolist()
+                        ), 
+                       go.Bar(
+    name = 'Slight',
+    x = x_purpose_accident,
+    y = purpose_accident.unstack()[3].tolist()
+                       )
+                     ])
+
+
+    fig_detail_junction_accident = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_detail_junction_accident,
+        y = detail_junction_accident.unstack()[1].tolist()
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_detail_junction_accident,
+        y = detail_junction_accident.unstack()[2].tolist()
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_detail_junction_accident,
+        y = detail_junction_accident.unstack()[3].tolist()
+                        )
+                        ])
+
+
+    fig_control_junction_accident = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_control_junction_accident,
+        y = control_junction_accident.unstack()[1].tolist()
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_control_junction_accident,
+        y = control_junction_accident.unstack()[2].tolist()
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_control_junction_accident,
+        y = control_junction_accident.unstack()[3].tolist()
+                        )
+                        ])
+
+
+    fig_vehicle_accident = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_vehicle_accident,
+        y = vehicle_accident.unstack()[1].tolist()
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_vehicle_accident,
+        y = vehicle_accident.unstack()[2].tolist()
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_vehicle_accident,
+        y = vehicle_accident.unstack()[3].tolist()
+                        )
+                        ])
+
+
+    fig_location_junction_accident = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_location_junction_accident,
+        y = location_junction_accident.unstack()[1].tolist()
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_location_junction_accident,
+        y = location_junction_accident.unstack()[2].tolist()
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_location_junction_accident,
+        y = location_junction_accident.unstack()[3].tolist()
+                        )
+                        ])
+
+
+    fig_manoeuvre_accident = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_manoeuvre_accident,
+        y = manoeuvre_accident.unstack()[1].tolist()
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_manoeuvre_accident,
+        y = manoeuvre_accident.unstack()[2].tolist()
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_manoeuvre_accident,
+        y = manoeuvre_accident.unstack()[3].tolist()
+                        )
+                        ])
+
+
+    initial = px.Figure(data=[go.Bar(
+        name = 'Fatal',
+        x = x_purpose_accident,
+        y = purpose_accident.unstack()[1].tolist(),
+        marker={'color': '#ffce30'}
+    ),
+                            go.Bar(
+        name = 'Serious',
+        x = x_purpose_accident,
+        y = purpose_accident.unstack()[2].tolist(),
+        marker={'color': '#5630ff'}
+                            ), 
+                        go.Bar(
+        name = 'Slight',
+        x = x_purpose_accident,
+        y = purpose_accident.unstack()[3].tolist(),
+        marker={'color': '#08d378'}
+                        )
+                        ])
+
+    updatemenus = [
+    {'buttons': [
+                {
+                'method': 'restyle',
+                'label': 'JOURNEY PURPOSE OF DRIVER/RIDER',
+                'args': [{'y': [dat.y for dat in fig_purpose_accident.data]}]
+                },
+                {
+                'method': 'restyle',
+                'label': 'JUNCTION DETAIL',
+                'args': [{'y': [dat.y for dat in fig_detail_junction_accident.data]}]
+                },
+                {
+                'method': 'restyle',
+                'label': 'JUNCTION CONTROL',
+                'args': [{'y': [dat.y for dat in fig_control_junction_accident.data]}]
+                },
+                {
+                'method': 'restyle',
+                'label': 'TYPE OF VEHICLE (without car)',
+                'args': [{'y': [dat.y for dat in fig_vehicle_accident.data]}]
+                },
+                {
+                'method': 'restyle',
+                'label': 'JUNCTION LOCATION OF VEHICLE',
+                'args': [{'y': [dat.y for dat in fig_location_junction_accident.data]}]
+                },
+                {
+                'method': 'restyle',
+                'label': 'MANOEUVRES',
+                'args': [{'y': [dat.y for dat in fig_manoeuvre_accident.data]}]
+                }
+                ],
+    'direction': 'down',
+    'showactive': True,
+    }
+    ]
+
+    initial = initial.update_layout(
+                title_text='Features in relation with the accident severity',
+                title_x=0.5,
+                xaxis_showgrid=False,
+                yaxis_showgrid=False,
+                legend=dict(title='Please click legend item to remove <br>or add to plot',
+                            traceorder='normal',
+                            bgcolor='white',
+                            xanchor = 'auto'),
+                plot_bgcolor= 'rgba(0, 0, 0, 0)',
+                updatemenus=updatemenus
+                )
+    
+    return initial
