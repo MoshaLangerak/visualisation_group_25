@@ -6,7 +6,7 @@ def load_accident_data(file_path : str) -> pd.DataFrame:
     df = pd.read_csv(file_path, low_memory=False)
     #dropping unnecessary columns
     df.drop(['Unnamed: 0', 'Unnamed: 0.1', 'towing_and_articulation', 'vehicle_manoeuvre','vehicle_location_restricted_lane',
-             'junction_location', 'skidding_and_overturning', 'hit_object_in_carriageway',
+             'junction_location', 'hit_object_in_carriageway',
              'vehicle_leaving_carriageway', 'hit_object_off_carriageway','first_point_of_impact',
              'vehicle_left_hand_drive', 'journey_purpose_of_driver', 'age_band_of_driver',
              'engine_capacity_cc', 'propulsion_code', 'age_of_vehicle',
@@ -69,5 +69,16 @@ def create_date_df(df : pd.DataFrame) -> pd.DataFrame:
     df = df.join(gb.agg({'number_of_vehicles': 'sum'}).rename(columns={'number_of_vehicles':'nr_vehicles_pd'})).join(
         gb.agg({'number_of_casualties': 'sum'}).rename(columns={'number_of_casualties': 'nr_casualties_pd'})).reset_index()
     return df
+
+def create_env_data(df: pd.DataFrame) -> pd.DataFrame:
+    relevant_factors = df[['weather_conditions', 'light_conditions',
+                   'skidding_and_overturning', 'road_surface_conditions',
+                    'special_conditions_at_site', 'number_of_vehicles', 
+                       'number_of_casualties', 'date']]
     
-# create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df
+    weather = relevant_factors[['weather_conditions','date', 'number_of_casualties']].groupby(['weather_conditions', df.date.dt.to_period("Y")]).sum(['number_of_casualties']).reset_index()
+    light = relevant_factors[['light_conditions','date', 'number_of_casualties']].groupby(['light_conditions', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
+    skidding = relevant_factors[['skidding_and_overturning','date', 'number_of_casualties']].groupby(['skidding_and_overturning', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
+    road = relevant_factors[['road_surface_conditions', 'date', 'number_of_casualties']].groupby(['road_surface_conditions', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
+    site =  relevant_factors[['special_conditions_at_site', 'date', 'number_of_casualties']].groupby(['special_conditions_at_site', df.date.dt.to_period("Y")]).sum('number_of_casualties').reset_index()
+    return weather, light, skidding, road, site

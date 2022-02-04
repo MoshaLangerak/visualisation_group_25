@@ -1,6 +1,7 @@
 from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df
+from jbi100_app.data import create_districts_df, merge_df, stats_per_capita, load_accident_data, load_population_data, load_geojson_data, create_districts_dates_df, create_date_df, create_density_df, create_env_data
+from jbi100_app.views.figs import get_df, create_env_fig
 
 import dash
 from dash import html
@@ -36,6 +37,8 @@ if __name__ == '__main__':
     print('Creating date data...')
     df_districts_dates = create_districts_dates_df(df_pd)
     df_dates = create_date_df(df_pd)
+    print('Creating environmental data...')
+    df_weather, df_light, df_skidding, df_road, df_site = create_env_data(df_pd)
     
     # ----------------------- Initializing options for the interactions --------------------
     #dropdown options (for features)
@@ -54,6 +57,9 @@ if __name__ == '__main__':
             '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01',
             '2015-01-01', '2016-01-01', '2017-01-01', '2018-01-01', '2019-01-01',
             '2020-01-01', '2020-12-31']
+    
+    fig_4_names = ['Light Conditions', 'Weather Conditions', 'Consequence of Skidding',
+            'Surface of Road', 'Special scene at sight']
 
     # ----------------------- Initializing starting figure -------------------------------
     fig_1 = px.choropleth_mapbox(
@@ -92,6 +98,8 @@ if __name__ == '__main__':
                 mapbox_center_lon = -0.1257400, # use this to align the map on longitude
                 mapbox_accesstoken=token
                     )
+    
+    fig_4 = create_env_fig(fig_4_names[0], df_light, df_weather, df_skidding, df_road, df_site)
     
     
     # ----------------------- Dash(board) lay-out ----------------------------------------
@@ -175,9 +183,21 @@ if __name__ == '__main__':
         ),
         dbc.Row(
             [
+                dbc.Col(html.Div(
+                    children = [html.P([
+                    html.Label('Choose a feature'),
+                    dcc.Dropdown(
+                            id='opt3',
+                            options=[{'label': x, 'value': x} for x in fig_4_names],
+                            value=None
+                        )]),
+                ]), style = sidebar_style, width=3),
+                dbc.Col(html.Div(dcc.Graph(id = 'plot_2', figure = fig_4)), style = body_style, width=8)
+            ]),
+        dbc.Row(
+            [
                 dbc.Col(html.Div(), style = sidebar_style, width=3),
-                dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),
-                dbc.Col(html.Div('Placeholder for graph'), style = body_style, width=4),  
+                dbc.Col(html.Div(dcc.Graph(id = 'plot_3', figure = fig_4)), style = body_style, width=8)
             ]),
         ]
     )
@@ -186,14 +206,16 @@ if __name__ == '__main__':
     @app.callback(
         [Output('choropleth', 'figure'), 
          Output('plot', 'figure'),
-         Output('density', 'figure')], 
+         Output('density', 'figure'), 
+         Output('plot_2', 'figure')], 
         [Input('stat', 'value'), 
          Input('opt', 'value'), 
          Input('opt2', 'value'), 
-         Input('slider', 'value')])
+         Input('slider', 'value'),
+         Input('opt3', 'value')])
 
-    def update_figure(stat, input1, input2, input3):
-        print(stat, input1, input2, input3)
+    def update_figure(stat, input1, input2, input3, input4):
+        print(stat, input1, input2, input3, input4)
         fig_1 = px.choropleth_mapbox(
             df_districts, geojson=geojson, color=stat,
             locations='Local Authority District Code', featureidkey= 'properties.geo_code',
@@ -245,7 +267,9 @@ if __name__ == '__main__':
                     mapbox_center_lon = -0.1257400, # use this to align the map on longitude
                     mapbox_accesstoken=token
                         )
-
-        return [fig_1, fig_2, fig_3]
+        
+        fig_4 = create_env_fig(input4, df_light, df_weather, df_skidding, df_road, df_site)
+        
+        return [fig_1, fig_2, fig_3, fig_4]
     
     app.run_server(debug=False, dev_tools_ui=True)
